@@ -1,28 +1,17 @@
 import createTable from './createTable.js';
+import fetchStudents from './fetchStudents.js';
 import filterTable from './filterTable.js';
-
-async function fetchStudents(group = 1) {
-	let response;
-
-	switch (group) {
-		case 1:
-			response = await fetch('./studentsGroupA.json');
-			break;
-		case 2:
-			response = await fetch('./studentsGroupB.json');
-			break;
-		default:
-			console.error('Invalid group number provided');
-			return;
-	}
-	
-	const students = await response.json();
-	return students;
-}
 
 const init = async () => {
 	const tableBody = document.querySelector('tbody[data-tbody-id="students"]');
+
+	const updateTable = (students) => {
+		tableBody.innerHTML = '';
+		createTable(tableBody, students);
+	};
+	
 	let students = await fetchStudents(2);
+	let filteredStudents = [...students];
 
 	createTable(tableBody, students);
 
@@ -40,36 +29,36 @@ const init = async () => {
 		header.addEventListener('click', () => {
 			const column = header.getAttribute('data-column');
 
-			students = students.sort((a, b) => {
-				const valueA = a[column].toString().toLowerCase();
-				const valueB = b[column].toString().toLowerCase();
+			filteredStudents = filteredStudents.sort((a, b) => {
+				const valueA = a[column];
+				const valueB = b[column];
 
-				if (sortData[column]) {
-					return valueA.localeCompare(valueB);
+				if (!isNaN(valueA) && !isNaN(valueB)) {
+					return sortData[column] ? valueA - valueB : valueB - valueA;
 				} else {
-					return valueB.localeCompare(valueA);
+					const stringValueA = a[column].toString().toLowerCase();
+					const stringValueB = b[column].toString().toLowerCase();
+
+					return sortData[column] ? stringValueA.localeCompare(stringValueB) : stringValueB.localeCompare(stringValueA);
 				}
 			});
 
 			sortData[column] = !sortData[column];
 
-			tableBody.innerHTML = '';
-			createTable(tableBody, students);
+			updateTable(filteredStudents);
 		});
 	});
 
+	const searchValues = {};
+
 	searchInputs.forEach(input => {
-		const searchValues = {};
-
 		input.addEventListener('input', () => {
-			searchInputs.forEach(input => {
-				searchValues[input.getAttribute('data-column')] = input.value;
-			});
+			const column = input.getAttribute('data-column');
+			searchValues[column] = input.value;
 
-			const filteredStudents = filterTable(students, searchValues);
+			filteredStudents = filterTable(students, searchValues);
 
-			tableBody.innerHTML = '';
-			createTable(tableBody, filteredStudents);
+			updateTable(filteredStudents);
 		});
 	});
 };
