@@ -1,14 +1,12 @@
-export default function createTable(body, items) {
-	 items.map((item) => {
+export default function createTable(body, data) {
+	 data.forEach((item) => {
 		const row = document.createElement('tr');
 
-		const itemKeys = Object.keys(item);
-
-		itemKeys.map((value) => {
+		Object.values(item).forEach((value) => {
 			const cell = document.createElement('td');
-			cell.textContent = item[value];
+			cell.textContent = value;
 			row.appendChild(cell);
-		});
+		})
 
 		body.appendChild(row);
 	});

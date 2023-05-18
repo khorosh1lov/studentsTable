@@ -1,3 +1,4 @@
+import createFiltersAndHeaders from './createFiltersAndHeaders.js';
 import createTable from './createTable.js';
 import fetchData from './fetchData.js';
 import filterTable from './filterTable.js';
@@ -9,10 +10,11 @@ const init = async (url) => {
 		tableBody.innerHTML = '';
 		createTable(tableBody, data);
 	};
-	
+
 	let data = await fetchData(url);
 	let filteredData = [...data];
 
+	createFiltersAndHeaders(data);
 	createTable(tableBody, data);
 
 	const searchInputs = document.querySelectorAll('.search');
@@ -22,10 +24,10 @@ const init = async (url) => {
 		id: true,
 		firstName: true,
 		lastName: true,
-		grade: true
-	}
+		grade: true,
+	};
 
-	headers.forEach(header => {
+	headers.forEach((header) => {
 		header.addEventListener('click', () => {
 			const column = header.getAttribute('data-column');
 
@@ -51,7 +53,7 @@ const init = async (url) => {
 
 	const searchValues = {};
 
-	searchInputs.forEach(input => {
+	searchInputs.forEach((input) => {
 		input.addEventListener('input', () => {
 			const column = input.getAttribute('data-column');
 			searchValues[column] = input.value;
@@ -63,4 +65,4 @@ const init = async (url) => {
 	});
 };
 
-init('./studentsGroupB.json');
+init('https://jsonplaceholder.typicode.com/users');
