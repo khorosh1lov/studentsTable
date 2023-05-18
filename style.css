@@ -22,6 +22,11 @@ body {
     width: 100%;
 }
 
+.control {
+    margin: 20px 0;
+    text-align: right;
+}
+
 .filter {
     border: 1px solid #eee;
     padding: 10px;
