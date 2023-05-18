@@ -6,27 +6,26 @@ import filterTable from './filterTable.js';
 const init = async (url) => {
 	const tableBody = document.querySelector('tbody[data-tbody-id="data"]');
 
-	const updateTable = (data) => {
-		tableBody.innerHTML = '';
-		createTable(tableBody, data);
-	};
-
 	let data = await fetchData(url);
-	let filteredData = [...data];
 
 	createFiltersAndHeaders(data);
 	createTable(tableBody, data);
 
+	const sortData = {};
+	Object.keys(data[0]).forEach(key => {
+		sortData[key] = true;
+	})
+
 	const searchInputs = document.querySelectorAll('.search');
 	const headers = document.querySelectorAll('.sortable');
 
-	const sortData = {
-		id: true,
-		firstName: true,
-		lastName: true,
-		grade: true,
-	};
+	let filteredData = [...data];
 
+	const updateTable = (data) => {
+		tableBody.innerHTML = '';
+		createTable(tableBody, data);
+	};
+	
 	headers.forEach((header) => {
 		header.addEventListener('click', () => {
 			const column = header.getAttribute('data-column');
