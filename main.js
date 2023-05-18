@@ -1,19 +1,19 @@
 import createTable from './createTable.js';
-import fetchStudents from './fetchStudents.js';
+import fetchData from './fetchData.js';
 import filterTable from './filterTable.js';
 
-const init = async () => {
-	const tableBody = document.querySelector('tbody[data-tbody-id="students"]');
+const init = async (url) => {
+	const tableBody = document.querySelector('tbody[data-tbody-id="data"]');
 
-	const updateTable = (students) => {
+	const updateTable = (data) => {
 		tableBody.innerHTML = '';
-		createTable(tableBody, students);
+		createTable(tableBody, data);
 	};
 	
-	let students = await fetchStudents(2);
-	let filteredStudents = [...students];
+	let data = await fetchData(url);
+	let filteredData = [...data];
 
-	createTable(tableBody, students);
+	createTable(tableBody, data);
 
 	const searchInputs = document.querySelectorAll('.search');
 	const headers = document.querySelectorAll('.sortable');
@@ -29,7 +29,7 @@ const init = async () => {
 		header.addEventListener('click', () => {
 			const column = header.getAttribute('data-column');
 
-			filteredStudents = filteredStudents.sort((a, b) => {
+			filteredData = filteredData.sort((a, b) => {
 				const valueA = a[column];
 				const valueB = b[column];
 
@@ -45,7 +45,7 @@ const init = async () => {
 
 			sortData[column] = !sortData[column];
 
-			updateTable(filteredStudents);
+			updateTable(filteredData);
 		});
 	});
 
@@ -56,11 +56,11 @@ const init = async () => {
 			const column = input.getAttribute('data-column');
 			searchValues[column] = input.value;
 
-			filteredStudents = filterTable(students, searchValues);
+			filteredData = filterTable(data, searchValues);
 
-			updateTable(filteredStudents);
+			updateTable(filteredData);
 		});
 	});
 };
 
-init();
+init('./studentsGroupB.json');
